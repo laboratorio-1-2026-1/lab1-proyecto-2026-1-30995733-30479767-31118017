@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List
+from app.schemas.paginacion_schema import PaginatedMeta
 
 class VentaProductoBase(BaseModel):
     id_cliente: int
@@ -18,3 +19,7 @@ class VentaProductoResponse(VentaProductoBase):
 
     class Config:
         from_attributes = True
+
+class VentaProductoPaginatedResponse(BaseModel):
+    meta: PaginatedMeta
+    rows: List[VentaProductoResponse]

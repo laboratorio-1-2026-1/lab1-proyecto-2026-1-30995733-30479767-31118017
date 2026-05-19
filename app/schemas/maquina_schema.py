@@ -1,5 +1,6 @@
 from pydantic import BaseModel, Field, field_validator
-from typing import Optional
+from typing import Optional, List
+from app.schemas.paginacion_schema import PaginatedMeta
 
 class MaquinaBase(BaseModel):
     id_categoria: int = Field(..., gt=0, description="ID de la categoría a la que pertenece la máquina")
@@ -28,3 +29,7 @@ class MaquinaUpdate(BaseModel):
     id_categoria: Optional[int] = None
     nombre: Optional[str] = None
     estado_maquina: Optional[str] = None
+
+class MaquinaPaginatedResponse(BaseModel):
+    meta: PaginatedMeta
+    rows: List[MaquinaResponse]

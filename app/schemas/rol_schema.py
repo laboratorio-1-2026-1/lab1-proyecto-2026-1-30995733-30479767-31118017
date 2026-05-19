@@ -1,5 +1,6 @@
 from pydantic import BaseModel
-from typing import Optional
+from typing import Optional, List
+from app.schemas.paginacion_schema import PaginatedMeta
 
 class RolBase(BaseModel):
     nombre_rol: str
@@ -13,3 +14,7 @@ class RolResponse(RolBase):
 
     class Config:
         from_attributes = True
+
+class RolPaginatedResponse(BaseModel):
+    meta: PaginatedMeta
+    rows: List[RolResponse]

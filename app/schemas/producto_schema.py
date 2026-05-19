@@ -1,4 +1,6 @@
 from pydantic import BaseModel
+from typing import List
+from app.schemas.paginacion_schema import PaginatedMeta # <-- Cambiado al global
 
 class ProductoBase(BaseModel):
     nombre_prod: str
@@ -13,3 +15,7 @@ class ProductoResponse(ProductoBase):
 
     class Config:
         from_attributes = True
+
+class ProductoPaginatedResponse(BaseModel):
+    meta: PaginatedMeta
+    rows: List[ProductoResponse]
