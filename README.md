@@ -63,7 +63,7 @@ pip install "fastapi[standard]" sqlalchemy alembic psycopg2-binary passlib bcryp
 Inicia la API con:
 
 ```bash
-uvicorn app.main:app --reload
+python -m uvicorn app.main:app --reload
 ```
 
 La aplicación iniciará en `http://127.0.0.1:8000`.

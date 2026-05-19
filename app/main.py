@@ -23,7 +23,9 @@ from app.api.v1.routers import (
     entrenador,
     reserva,
     producto,
-
+    registro_venta,
+    control_acceso,
+    venta_producto
 )
 
 Base.metadata.create_all(bind=engine)
@@ -83,6 +85,8 @@ app.include_router(control_acceso.router, prefix="/api/v1/control-acceso", tags=
 
 # Módulo de Tienda
 app.include_router(producto.router, prefix="/api/v1/productos", tags=["Tienda y Ventas"])
+app.include_router(venta_producto.router, prefix="/api/v1/ventas", tags=["Tienda y Ventas"])
+app.include_router(registro_venta.router, prefix="/api/v1/registros-venta", tags=["Tienda y Ventas"])
 
 # Módulo de Gestión de Clases y Reservas
 app.include_router(entrenador.router, prefix="/api/v1/entrenadores", tags=["Gestión de Clases"])

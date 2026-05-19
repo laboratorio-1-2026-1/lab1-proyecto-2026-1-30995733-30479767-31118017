@@ -1,9 +1,10 @@
 from pydantic import BaseModel
 from datetime import datetime
+from typing import Optional
 
 class ControlAccesoBase(BaseModel):
     id_cliente: int
-    fecha_entrada: datetime
+    fecha_entrada: Optional[datetime] = None
 
 class ControlAccesoCreate(ControlAccesoBase):
     pass
