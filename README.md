@@ -54,6 +54,10 @@ Desde la raíz del proyecto:
 
 ```bash
 python -m venv .venv
+
+## En caso de que venv de error colocar este comadno antes de venv
+Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
+
 .venv\Scripts\activate
 pip install "fastapi[standard]" sqlalchemy alembic psycopg2-binary passlib bcrypt==4.0.1 "python-jose[cryptography]" python-multipart pg8000
 ```

@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 from datetime import date
-from typing import Optional
-
+from typing import Optional, List
+from app.schemas.paginacion_schema import PaginatedMeta
 
 class MembresiaBase(BaseModel):
     id_cliente: int
@@ -11,7 +11,6 @@ class MembresiaBase(BaseModel):
     fecha_fin: date
     estado: Optional[str] = "Activa"
 
-
 class MembresiaCreate(MembresiaBase):
     pass
 
@@ -20,3 +19,8 @@ class MembresiaResponse(MembresiaBase):
 
     class Config:
         from_attributes = True
+
+
+class MembresiaPaginatedResponse(BaseModel):
+    meta: PaginatedMeta
+    rows: List[MembresiaResponse]

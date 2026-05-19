@@ -1,4 +1,6 @@
 from pydantic import BaseModel
+from typing import List
+from app.schemas.paginacion_schema import PaginatedMeta
 
 class RegistroVentaBase(BaseModel):
     id_venta: int
@@ -15,3 +17,7 @@ class RegistroVentaResponse(RegistroVentaBase):
 
     class Config:
         from_attributes = True
+
+class RegistroVentaPaginatedResponse(BaseModel):
+    meta: PaginatedMeta
+    rows: List[RegistroVentaResponse]

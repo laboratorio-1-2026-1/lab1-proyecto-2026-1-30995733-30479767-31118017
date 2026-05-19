@@ -1,4 +1,6 @@
 from pydantic import BaseModel
+from typing import List
+from app.schemas.paginacion_schema import PaginatedMeta
 
 class ClienteBase(BaseModel):
     id_usuario: int
@@ -14,3 +16,8 @@ class ClienteResponse(ClienteBase):
 
     class Config:
         from_attributes = True
+
+
+class ClientePaginatedResponse(BaseModel):
+    meta: PaginatedMeta
+    rows: List[ClienteResponse]

@@ -1,5 +1,6 @@
 from pydantic import BaseModel
-from typing import Optional
+from typing import Optional, List
+from app.schemas.paginacion_schema import PaginatedMeta
 
 class EntrenadorBase(BaseModel):
     id_usuario: int
@@ -15,3 +16,8 @@ class EntrenadorResponse(EntrenadorBase):
 
     class Config:
         from_attributes = True
+
+
+class EntrenadorPaginatedResponse(BaseModel):
+    meta: PaginatedMeta
+    rows: List[EntrenadorResponse]

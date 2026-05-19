@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List
+from app.schemas.paginacion_schema import PaginatedMeta
 
 class ControlAccesoBase(BaseModel):
     id_cliente: int
@@ -14,3 +15,8 @@ class ControlAccesoResponse(ControlAccesoBase):
 
     class Config:
         from_attributes = True
+
+
+class ControlAccesoPaginatedResponse(BaseModel):
+    meta: PaginatedMeta
+    rows: List[ControlAccesoResponse]

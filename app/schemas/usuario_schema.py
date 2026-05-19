@@ -1,4 +1,6 @@
 from pydantic import BaseModel, EmailStr
+from typing import List
+from app.schemas.paginacion_schema import PaginatedMeta
 
 class UsuarioBase(BaseModel):
     email: EmailStr 
@@ -12,3 +14,7 @@ class UsuarioResponse(UsuarioBase):
     
     class Config:
         from_attributes = True
+
+class UsuarioPaginatedResponse(BaseModel):
+    meta: PaginatedMeta
+    rows: List[UsuarioResponse]

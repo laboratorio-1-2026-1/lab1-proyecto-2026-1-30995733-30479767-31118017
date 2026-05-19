@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List
+from app.schemas.paginacion_schema import PaginatedMeta
 
 class EvaluacionBiometricaBase(BaseModel):
     id_cliente: int
@@ -12,13 +13,15 @@ class EvaluacionBiometricaBase(BaseModel):
     historial: Optional[str] = None
     fecha: datetime
 
-
 class EvaluacionBiometricaCreate(EvaluacionBiometricaBase):
     pass
-
 
 class EvaluacionBiometricaResponse(EvaluacionBiometricaBase):
     id_evaluacion: int
 
     class Config:
         from_attributes = True
+
+class EvaluacionBiometricaPaginatedResponse(BaseModel):
+    meta: PaginatedMeta
+    rows: List[EvaluacionBiometricaResponse]

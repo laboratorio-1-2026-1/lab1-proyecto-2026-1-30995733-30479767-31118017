@@ -1,5 +1,7 @@
 from pydantic import BaseModel
 from datetime import datetime
+from typing import List
+from app.schemas.paginacion_schema import PaginatedMeta
 
 class ReservaBase(BaseModel):
     id_cliente: int
@@ -14,3 +16,7 @@ class ReservaResponse(ReservaBase):
 
     class Config:
         from_attributes = True
+
+class ReservaPaginatedResponse(BaseModel):
+    meta: PaginatedMeta
+    rows: List[ReservaResponse]

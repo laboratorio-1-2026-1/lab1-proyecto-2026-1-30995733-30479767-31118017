@@ -1,5 +1,7 @@
 from pydantic import BaseModel
 from datetime import datetime
+from typing import List
+from app.schemas.paginacion_schema import PaginatedMeta
 
 class SesionClaseBase(BaseModel):
     id_disciplina: int
@@ -16,3 +18,7 @@ class SesionClaseResponse(SesionClaseBase):
 
     class Config:
         from_attributes = True
+
+class SesionClasePaginatedResponse(BaseModel):
+    meta: PaginatedMeta
+    rows: List[SesionClaseResponse]
