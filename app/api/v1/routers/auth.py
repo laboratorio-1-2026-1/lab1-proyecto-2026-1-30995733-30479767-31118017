@@ -1,7 +1,7 @@
 from datetime import timedelta
 from fastapi import APIRouter, Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
+from pydantic import BaseModel, EmailStr
 
 from app.db.database import get_db
 from app.crud.crud_usuario import usuario as crud_usuario
@@ -9,15 +9,19 @@ from app.core.security import create_access_token, verify_password, ACCESS_TOKEN
 
 router = APIRouter()
 
+class UsuarioLogin(BaseModel):
+    email: EmailStr
+    password: str
+
 @router.post("/login")
 def login_access_token(
-    db: Session = Depends(get_db), 
-    form_data: OAuth2PasswordRequestForm = Depends()
+    user_credentials: UsuarioLogin,
+    db: Session = Depends(get_db)
 ):
 
-    user = crud_usuario.get_by_email(db, email=form_data.username)
+    user = crud_usuario.get_by_email(db, email=user_credentials.email)
 
-    if not user or not verify_password(form_data.password, user.password):
+    if not user or not verify_password(user_credentials.password, user.password):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Correo o contraseña incorrectos",
@@ -29,6 +33,7 @@ def login_access_token(
         data={"sub": user.email}, 
         expires_delta=access_token_expires
     )
+    
     return {
         "access_token": access_token, 
         "token_type": "bearer"
