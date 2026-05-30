@@ -1,0 +1,24 @@
+from pydantic import BaseModel
+from typing import Optional, List
+from app.schemas.paginacion_schema import PaginatedMeta
+
+class RolBase(BaseModel):
+    nombre_rol: str
+    descripcion: Optional[str] = None 
+
+class RolCreate(RolBase):
+    pass
+
+class RolResponse(RolBase):
+    id_rol: int
+
+    class Config:
+        from_attributes = True
+
+class RolPaginatedResponse(BaseModel):
+    meta: PaginatedMeta
+    rows: List[RolResponse]
+
+class RolUpdate(BaseModel):
+    nombre_rol: Optional[str] = None
+    descripcion: Optional[str] = None
