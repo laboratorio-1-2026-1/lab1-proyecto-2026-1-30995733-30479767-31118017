@@ -1,0 +1,6 @@
+# Archivo generado al crear el entorno virtual.
+/.venv
+# Carpetas generadas tras ejecutar el código.
+__pycache__/
+# Datos a proteger
+.env
