@@ -8,6 +8,6 @@ class ControlAcceso(Base):
 
     id_acceso = Column(Integer, primary_key=True, index=True)
     id_cliente = Column(Integer, ForeignKey("cliente.id_cliente"), nullable=False)
-    fecha_entrada = Column(DateTime, default=datetime.utcnow)
+    fecha_entrada = Column(DateTime, default=datetime.now)
     
     cliente = relationship("Cliente", back_populates="asistencias")

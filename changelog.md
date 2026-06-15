@@ -1,6 +1,17 @@
 
 --------------------------------------
-Cambios 30/05/26
+Cambios al 14/06/26
+
+- Ajustes de zona horaria que reflejan correctamente la hora de Venezuela, reajustando los datos de entrada para que de ser posible en vez de ser pedida una fecha de entrada, esta sea calculada en el momento sin interacción del usuario evitando errores de ingreso.
+
+- Implementación de archivos para que se pueda dockerizar.
+
+- Nuevos datos de prueba para la defensa.
+
+- Ajustes menores para el correcto funcionamiento de validaciones.
+
+--------------------------------------
+Cambios al 30/05/26
 
 - Reestructuración del proyecto
 

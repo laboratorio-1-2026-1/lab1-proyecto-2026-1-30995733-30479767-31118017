@@ -73,27 +73,38 @@ def poblar_datos_semilla(db: Session):
     db.flush()
 
 
+    # Membresía Activa:
     pago1 = PagoMembresia(id_cliente=cli1.id_cliente, id_metodo=mp_zelle.id_metodo, monto_membresia=300.0, referencia="ZELLE-ACT-01", fecha_pago=datetime(2026, 1, 15, 10, 0))
     db.add(pago1)
     db.flush()
-    mem1 = Membresia(id_cliente=cli1.id_cliente, id_plan=plan_anual.id_plan, id_pago=pago1.id_pago, fecha_inicio=datetime(2026, 1, 15), fecha_fin=datetime(2026, 9, 15), estado=True)
-    pago2 = PagoMembresia(id_cliente=cli2.id_cliente, id_metodo=mp_efectivo.id_metodo, monto_membresia=30.0, referencia="CASH-VEN-02", fecha_pago=datetime(2025, 8, 1, 9, 30))
+    mem1 = Membresia(id_cliente=cli1.id_cliente, id_plan=plan_anual.id_plan, id_pago=pago1.id_pago, fecha_inicio=datetime(2026, 1, 15), fecha_fin=datetime(2027, 1, 15), estado=True)
+
+    # Membresía vencida:
+    pago2 = PagoMembresia(id_cliente=cli2.id_cliente, id_metodo=mp_efectivo.id_metodo, monto_membresia=30.0, referencia=None, fecha_pago=datetime(2026, 4, 1, 9, 30))
     db.add(pago2)
     db.flush()
-    mem2 = Membresia(id_cliente=cli2.id_cliente, id_plan=plan_mensual.id_plan, id_pago=pago2.id_pago, fecha_inicio=datetime(2025, 8, 1), fecha_fin=datetime(2025, 9, 1), estado=True) 
-    pago3 = PagoMembresia(id_cliente=cli3.id_cliente, id_metodo=mp_tdc.id_metodo, monto_membresia=30.0, referencia="TDC-PRX-03", fecha_pago=datetime(2026, 4, 29, 14, 0))
+    mem2 = Membresia(id_cliente=cli2.id_cliente, id_plan=plan_mensual.id_plan, id_pago=pago2.id_pago, fecha_inicio=datetime(2026, 4, 1), fecha_fin=datetime(2026, 5, 1), estado=True) 
+
+    # Membresía por vencer:
+    pago3 = PagoMembresia(id_cliente=cli3.id_cliente, id_metodo=mp_tdc.id_metodo, monto_membresia=30.0, referencia="TDC-PRX-03", fecha_pago=datetime(2026, 5, 19, 14, 0))
     db.add(pago3)
     db.flush()
-    mem3 = Membresia(id_cliente=cli3.id_cliente, id_plan=plan_mensual.id_plan, id_pago=pago3.id_pago, fecha_inicio=datetime(2026, 4, 29), fecha_fin=datetime(2026, 5, 29), estado=True)
+    mem3 = Membresia(id_cliente=cli3.id_cliente, id_plan=plan_mensual.id_plan, id_pago=pago3.id_pago, fecha_inicio=datetime(2026, 5, 19), fecha_fin=datetime(2026, 6, 18), estado=True)
+
+    # Membresía Suspendida Manualmente:
     pago4 = PagoMembresia(id_cliente=cli4.id_cliente, id_metodo=mp_tdc.id_metodo, monto_membresia=80.0, referencia="TDC-SUS-04", fecha_pago=datetime(2026, 5, 1, 11, 0))
     db.add(pago4)
     db.flush()
-    mem4 = Membresia(id_cliente=cli4.id_cliente, id_plan=plan_trimestral.id_plan, id_pago=pago4.id_pago, fecha_inicio=datetime(2026, 5, 1), fecha_fin=datetime(2026, 8, 1), estado=False) 
-    pago5 = PagoMembresia(id_cliente=cli5.id_cliente, id_metodo=mp_zelle.id_metodo, monto_membresia=30.0, referencia="ZELLE-AGO-05", fecha_pago=datetime(2026, 8, 10, 16, 45))
+    mem4 = Membresia(id_cliente=cli4.id_cliente, id_plan=plan_trimestral.id_plan, id_pago=pago4.id_pago, fecha_inicio=datetime(2026, 5, 1), fecha_fin=datetime(2026, 7, 30), estado=False) 
+
+    # Membresía Activa:
+    pago5 = PagoMembresia(id_cliente=cli5.id_cliente, id_metodo=mp_zelle.id_metodo, monto_membresia=30.0, referencia="ZELLE-AGO-05", fecha_pago=datetime(2026, 6, 10, 16, 45))
     db.add(pago5)
     db.flush()
-    mem5 = Membresia(id_cliente=cli5.id_cliente, id_plan=plan_mensual.id_plan, id_pago=pago5.id_pago, fecha_inicio=datetime(2026, 8, 10), fecha_fin=datetime(2026, 9, 10), estado=True)
+    mem5 = Membresia(id_cliente=cli5.id_cliente, id_plan=plan_mensual.id_plan, id_pago=pago5.id_pago, fecha_inicio=datetime(2026, 6, 10), fecha_fin=datetime(2026, 7, 10), estado=True)
+    
     db.add_all([mem1, mem2, mem3, mem4, mem5])
+
 
 
     cat_cardio = CategoriaMaquina(nombre_categoria="Cardio")
