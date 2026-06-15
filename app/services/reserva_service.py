@@ -35,7 +35,10 @@ def crear_reserva(db: Session, reserva_in: reserva_schema.ReservaCreate):
     if reserva_chocante:
         raise ConflictException(codigo_interno="ERR_RESERVA_SOLAPAMIENTO", mensaje="Conflicto: El cliente ya tiene una reserva activa en este mismo horario.")
 
-    return crud_reserva.create(db, obj_in=reserva_in.model_dump())
+    datos_guardar = reserva_in.model_dump()
+    datos_guardar["fecha_reserva"] = datetime.now()
+
+    return crud_reserva.create(db, obj_in=datos_guardar)
 
 def obtener_reservas_paginadas(db: Session, page: int, page_size: int, id_cliente: Optional[int] = None, id_sesion: Optional[int] = None):
 
@@ -51,6 +54,12 @@ def actualizar_reserva(db: Session, id_reserva: int, reserva_in: reserva_schema.
         sesion_destino = crud_sesion.get(db, id=reserva_in.id_sesion)
         if not sesion_destino:
              raise NotFoundException(codigo_interno="ERR_SESION", mensaje="Nueva sesión no existe.")
+
+        if datetime.now() >= sesion_destino.fecha_inic:
+            raise BadRequestException(
+                codigo_interno="ERR_SESION_INICIADA", 
+                mensaje="No puedes reagendar para una sesión que ya está en curso o finalizada."
+            )
 
         reservas_actuales = crud_reserva.contar_por_sesion(db, id_sesion=reserva_in.id_sesion)
         if reservas_actuales >= sesion_destino.cupos:

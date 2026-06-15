@@ -14,7 +14,7 @@ class EvaluacionBiometrica(Base):
     porc_grasa = Column(Float, nullable=False)
     observaciones = Column(Text)
     historial = Column(Text)
-    fecha = Column(DateTime, default=datetime.utcnow)
+    fecha = Column(DateTime, default=datetime.now)
 
     cliente = relationship("Cliente", back_populates="evaluaciones")
     entrenador = relationship("Entrenador", back_populates="evaluaciones")

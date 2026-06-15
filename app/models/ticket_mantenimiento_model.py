@@ -10,7 +10,7 @@ class TicketMantenimiento(Base):
     id_maquina = Column(Integer, ForeignKey("maquina.id_maquina"), nullable=False)
     desc_fallo = Column(Text, nullable=False)
     costo_reparacion = Column(Float, nullable=True)
-    fecha_falla = Column(DateTime, default=datetime.utcnow)
+    fecha_falla = Column(DateTime, default=datetime.now)
     fecha_resolucion = Column(DateTime, nullable=True)
 
     maquina = relationship("Maquina", back_populates="tickets")

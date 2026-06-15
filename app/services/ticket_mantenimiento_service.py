@@ -42,11 +42,6 @@ def crear_ticket(db: Session, ticket_in: ticket_mantenimiento_schema.TicketMante
     nuevo_estado = "Fuera de Servicio" if "roto" in ticket_in.desc_fallo.lower() else "En Mantenimiento"
     crud_maquina.update(db=db, db_obj=maquina_db, obj_in={"estado_maquina": nuevo_estado})
 
-    if not ticket_in.fecha_falla:
-        ticket_in.fecha_falla = datetime.now()
-    else:
-        ticket_in.fecha_falla = ticket_in.fecha_falla.replace(tzinfo=None)
-
     return crud_ticket_mantenimiento.create(db, obj_in=ticket_in.model_dump())
 
 
@@ -66,6 +61,9 @@ def actualizar_estado_ticket(db: Session, id_ticket: int, ticket_in: ticket_mant
         )
 
     update_data = ticket_in.model_dump(exclude_unset=True)
+
+    if "id_maquina" in update_data:
+        del update_data["id_maquina"]
 
     if "costo_reparacion" in update_data and update_data["costo_reparacion"] is not None:
         if update_data["costo_reparacion"] < 0:

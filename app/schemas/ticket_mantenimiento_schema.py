@@ -1,31 +1,25 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from datetime import datetime
 from typing import Optional, List
 from app.schemas.paginacion_schema import PaginatedMeta
 
-class TicketMantenimientoBase(BaseModel):
-    id_maquina: int
-    desc_fallo: str
-    costo_reparacion: Optional[float] = None
-    fecha_falla: Optional[datetime] = None
-    fecha_resolucion: Optional[datetime] = None
+class TicketMantenimientoCreate(BaseModel):
+    id_maquina: int = Field(..., gt=0)
+    desc_fallo: str = Field(..., min_length=0)
+    costo_reparacion: Optional[float] = Field(default=None)
 
-class TicketMantenimientoCreate(TicketMantenimientoBase):
-    pass
-
-class TicketMantenimientoResponse(TicketMantenimientoBase):
+class TicketMantenimientoResponse(TicketMantenimientoCreate):
     id_ticket: int 
+    fecha_falla: datetime = Field(description="Registrado automáticamente al crear")
+    fecha_resolucion: Optional[datetime] = Field(default=None, description="Registrado al cerrar el ticket")
 
     class Config:
         from_attributes = True
 
 class TicketMantenimientoUpdate(BaseModel):
-    id_maquina: Optional[int] = None
     desc_fallo: Optional[str] = None
-    costo_reparacion: Optional[float] = None
-    fecha_falla: Optional[datetime] = None
+    costo_reparacion: Optional[float] = Field(default=None)
     fecha_resolucion: Optional[datetime] = None
-
 
 class TicketMantenimientoPaginatedResponse(BaseModel):
     meta: PaginatedMeta
