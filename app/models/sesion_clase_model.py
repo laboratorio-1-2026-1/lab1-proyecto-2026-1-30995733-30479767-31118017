@@ -12,6 +12,11 @@ class SesionClase(Base):
     fecha_fin = Column(DateTime, nullable=False)
     cupos = Column(Integer, nullable=False)
 
+    @property
+    def cupos_disponibles(self) -> int:
+        reservas_ocupadas = len(self.reservas) 
+        return max(0, self.cupos - reservas_ocupadas)
+    
     disciplina = relationship("Disciplina", back_populates="sesiones")
     reservas = relationship("Reserva", back_populates="sesion")
     entrenador = relationship("Entrenador", back_populates="sesiones")

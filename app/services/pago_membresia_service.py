@@ -8,15 +8,6 @@ from app.repositories.pago_membresia_repository import pago_membresia as crud_pa
 from app.repositories.cliente_repository import cliente as crud_cliente
 from app.repositories.metodo_pago_repository import metodo_pago as crud_metodo_pago
 
-def validar_estado_pago(estado: str):
-
-    estados_permitidos = ["Completado", "Pendiente", "Rechazado", "Reembolsado"]
-    if estado and estado.strip().capitalize() not in estados_permitidos:
-        raise BadRequestException(
-            codigo_interno="ERR_ESTADO_PAGO_INVALIDO",
-            mensaje=f"El estado de pago '{estado}' no es válido. Opciones permitidas: Completado, Pendiente, Rechazado, Reembolsado."
-        )
-
 def crear_pago(db: Session, pago_in: pago_membresia_schema.PagoMembresiaCreate):
 
     if not crud_cliente.get(db=db, id=pago_in.id_cliente):
@@ -28,13 +19,14 @@ def crear_pago(db: Session, pago_in: pago_membresia_schema.PagoMembresiaCreate):
     if pago_in.monto_membresia <= 0:
         raise BadRequestException(codigo_interno="ERR_MONTO_INVALIDO", mensaje="El monto del pago debe ser estrictamente mayor a 0.")
 
-    if hasattr(pago_in, 'estado_pago') and pago_in.estado_pago:
-        validar_estado_pago(pago_in.estado_pago)
-        pago_in.estado_pago = pago_in.estado_pago.strip().capitalize()
-    elif hasattr(pago_in, 'estado_pago'):
-        pago_in.estado_pago = "Completado" 
+    if pago_in.id_metodo != 1:
+        if not pago_in.referencia or not pago_in.referencia.strip():
+            raise BadRequestException(
+                codigo_interno="ERR_REFERENCIA_REQUERIDA", 
+                mensaje="La referencia es obligatoria para pagos con Zelle, Tarjeta de Crédito/Débito, etc."
+            )
 
-    if pago_in.referencia:
+    if pago_in.referencia and pago_in.referencia.strip():
         referencia_limpia = pago_in.referencia.strip().upper()
         if crud_pago_membresia.get_by_referencia(db, referencia=referencia_limpia):
             raise ConflictException(
@@ -42,6 +34,8 @@ def crear_pago(db: Session, pago_in: pago_membresia_schema.PagoMembresiaCreate):
                 mensaje=f"Alerta de Fraude: La referencia de pago '{referencia_limpia}' ya se encuentra registrada."
             )
         pago_in.referencia = referencia_limpia
+    else:
+        pago_in.referencia = None
 
     return crud_pago_membresia.create(db, obj_in=pago_in.model_dump())
 

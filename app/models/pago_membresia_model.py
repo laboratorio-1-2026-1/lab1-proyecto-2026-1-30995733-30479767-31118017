@@ -11,7 +11,7 @@ class PagoMembresia(Base):
     id_metodo = Column(Integer, ForeignKey("metodo_pago.id_metodo"), nullable=False)
     monto_membresia = Column(Float, nullable=False)
     referencia = Column(String(100), nullable=True, unique=True)
-    fecha_pago = Column(DateTime, default=datetime.utcnow)
+    fecha_pago = Column(DateTime, default=datetime.now)
     estado_pago = Column(String(50), nullable=False, default="Completado")
 
     cliente = relationship("Cliente", back_populates="pagos")

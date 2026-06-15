@@ -9,7 +9,7 @@ class VentaProducto(Base):
     id_venta = Column(Integer, primary_key=True, index=True)
     id_cliente = Column(Integer, ForeignKey("cliente.id_cliente"), nullable=False)
     id_metodo = Column(Integer, ForeignKey("metodo_pago.id_metodo"), nullable=False)
-    fecha_venta = Column(DateTime, default=datetime.utcnow)
+    fecha_venta = Column(DateTime, default=datetime.now)
     monto_total = Column(Float, nullable=False)
     referencia = Column(String(100), nullable=True)
     estado_venta = Column(String(50), nullable=False, default="Pendiente")

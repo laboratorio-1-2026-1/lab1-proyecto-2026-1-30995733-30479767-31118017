@@ -8,20 +8,12 @@ from app.repositories.membresia_repository import membresia as crud_membresia
 from app.repositories.cliente_repository import cliente as crud_cliente
 from app.repositories.plan_repository import plan as crud_plan
 from app.repositories.pago_membresia_repository import pago_membresia as crud_pago_membresia
-from datetime import datetime
+from datetime import datetime, timedelta
 
 def crear_membresia(db: Session, membresia_in: membresia_schema.MembresiaCreate):
 
     if isinstance(membresia_in.fecha_inicio, datetime):
         membresia_in.fecha_inicio = membresia_in.fecha_inicio.date()
-    if isinstance(membresia_in.fecha_fin, datetime):
-        membresia_in.fecha_fin = membresia_in.fecha_fin.date()
-
-    if membresia_in.fecha_fin <= membresia_in.fecha_inicio:
-        raise BadRequestException(
-            codigo_interno="ERR_FECHAS_INVALIDAS",
-            mensaje="Regla de Negocio: La fecha de finalización de la membresía debe ser posterior a su fecha de inicio."
-        )
 
     if not crud_cliente.get(db=db, id=membresia_in.id_cliente):
         raise NotFoundException(codigo_interno="ERR_CLIENTE_NOT_FOUND", mensaje="El cliente ingresado no existe en el sistema.")
@@ -53,18 +45,30 @@ def crear_membresia(db: Session, membresia_in: membresia_schema.MembresiaCreate)
             mensaje=f"Fondos insuficientes: El plan cuesta ${plan_db.precio_sub}, pero el pago registrado es de solo ${pago_db.monto_membresia}."
         )
 
+    if pago_db.estado_pago.lower() != "completado":
+        raise ConflictException(
+            codigo_interno="ERR_PAGO_NO_COMPLETADO",
+            mensaje="Operación rechazada: No se puede activar una membresía con un pago pendiente o rechazado."
+        )
+
+    fecha_fin_calculada = membresia_in.fecha_inicio + timedelta(days=plan_db.duracion_dias)
+
     choque_fechas = crud_membresia.verificar_superposicion_fechas(
         db=db, 
         id_cliente=membresia_in.id_cliente, 
         fecha_inicio=membresia_in.fecha_inicio, 
-        fecha_fin=membresia_in.fecha_fin
+        fecha_fin=fecha_fin_calculada
     )
     if choque_fechas:
         raise ConflictException(
             codigo_interno="ERR_CONTRATO_SOLAPADO",
             mensaje=f"El cliente ya tiene una membresía activa en ese rango de fechas (ID Choque: {choque_fechas.id_membresia})."
         )
-    return crud_membresia.create(db, obj_in=membresia_in.model_dump())
+
+    datos_guardar = membresia_in.model_dump()
+    datos_guardar["fecha_fin"] = fecha_fin_calculada
+
+    return crud_membresia.create(db, obj_in=datos_guardar)
 
 def obtener_membresias_paginadas(db: Session, page: int, page_size: int, id_cliente: Optional[int] = None, estado: Optional[bool] = None):
     query = crud_membresia.obtener_query_filtrada(db, id_cliente=id_cliente, estado=estado)
@@ -78,21 +82,10 @@ def actualizar_membresia(db: Session, id_membresia: int, membresia_in: membresia
     update_data = membresia_in.model_dump(exclude_unset=True)
 
     fecha_inic_check = update_data.get("fecha_inicio", membresia_actual.fecha_inicio)
-    fecha_fin_check = update_data.get("fecha_fin", membresia_actual.fecha_fin)
-
     if isinstance(fecha_inic_check, datetime):
         fecha_inic_check = fecha_inic_check.date()
-    if isinstance(fecha_fin_check, datetime):
-        fecha_fin_check = fecha_fin_check.date()
 
     update_data["fecha_inicio"] = fecha_inic_check
-    update_data["fecha_fin"] = fecha_fin_check
-
-    if fecha_fin_check <= fecha_inic_check:
-        raise BadRequestException(
-            codigo_interno="ERR_FECHAS_INVALIDAS",
-            mensaje="Error de Modificación: La fecha de finalización debe ser estrictamente posterior a su fecha de inicio."
-        )
 
     efectivo_id_cliente = update_data.get("id_cliente", membresia_actual.id_cliente)
     efectivo_id_plan = update_data.get("id_plan", membresia_actual.id_plan)
@@ -125,12 +118,16 @@ def actualizar_membresia(db: Session, id_membresia: int, membresia_in: membresia
             codigo_interno="ERR_FONDOS_INSUFICIENTES", 
             mensaje=f"Error en modificación: El plan cuesta ${plan_db.precio_sub}, pero el pago avala solo ${pago_db.monto_membresia}."
         )
-    if "fecha_inicio" in update_data or "fecha_fin" in update_data or "id_cliente" in update_data:
+
+    fecha_fin_calculada = fecha_inic_check + timedelta(days=plan_db.duracion_dias)
+    update_data["fecha_fin"] = fecha_fin_calculada
+
+    if "fecha_inicio" in update_data or "id_plan" in update_data or "id_cliente" in update_data:
         choque_fechas = crud_membresia.verificar_superposicion_fechas(
             db=db,
             id_cliente=efectivo_id_cliente,
             fecha_inicio=fecha_inic_check,
-            fecha_fin=fecha_fin_check,
+            fecha_fin=fecha_fin_calculada,
             id_membresia_excluir=id_membresia
         )
         if choque_fechas:
@@ -138,4 +135,5 @@ def actualizar_membresia(db: Session, id_membresia: int, membresia_in: membresia
                 codigo_interno="ERR_CONTRATO_SOLAPADO",
                 mensaje=f"No se puede modificar: El nuevo rango interfiere con otra membresía activa del cliente (ID contrato chocante: {choque_fechas.id_membresia})."
             )
+            
     return crud_membresia.update(db=db, db_obj=membresia_actual, obj_in=update_data)

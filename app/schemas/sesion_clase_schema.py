@@ -14,7 +14,8 @@ class SesionClaseCreate(SesionClaseBase):
     pass
 
 class SesionClaseResponse(SesionClaseBase):
-    id_sesion: int  
+    id_sesion: int
+    cupos_disponibles: int  
 
     class Config:
         from_attributes = True
