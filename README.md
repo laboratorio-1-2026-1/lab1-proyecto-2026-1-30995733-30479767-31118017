@@ -93,6 +93,9 @@ lab1-proyecto-2026-1-30995733-30479767-31118017/
 ├── .gitignore                      # Listado de exclusión para evitar subir secretos a GitHub
 ├── .env.example                    # Contiene la contraseña que permite la conexión con PostgreSQL
 ├── requeriments.txt                # Librerías necesarias para correr nuestro código.
+├── docker-compose.yml              # Contiene información sensible que va en la dockerizacion, aquí quien descague el repositorio debe meter su clave de postgre y la secret key.
+├── Dockerfile                      # Lo escencial para el funcionalmiento del docker, requirements.txt, version de python...
+├── .dockerignore                   # Archivos omitidos en la dockerización.
 └── alembic.ini                     # Archivo de configuración estructural básico de Alembic
 ```
 
@@ -249,6 +252,26 @@ http://127.0.0.1:8000/docs
 Eso sería todo.
 
 --------------------------------------
+
+## DOCKER 🐳
+
+Instalar Docker Desktop
+
+Desde la Microsoft Store: https://apps.microsoft.com/detail/XP8CBJ40XLBWKX?hl=es-VE&gl=VE&ocid=pdpshare
+
+Desde la web: https://docs.docker.com/desktop/setup/install/windows-install/
+
+Asegurarse que desde la BIOS se permita ejecutar maquinas virtuales para evitar errores.
+
+Una vez ejecutado el programa docker de fondo, asegurarse de que en docker-compose.yml esten las credenciales correspondientes en SECRET_KEY, DATABASE_URL y POSTGRES_PASSWORD de creer necesario.
+
+En VSCode tener instalado Container Tools: https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-containers
+
+Se debe de ejecutar en la terminal docker compose up --build (o docker-compose up --build) y así se ejecutaría el docker.
+
+Verificar en http://localhost:8000/docs#/
+
+Cerrar docker con Ctrl+C y luego docker compose down.
 
 
 ## Datos de prueba 🌱
